@@ -10,12 +10,42 @@ measured precision and recall on a held-out test set, and honest metrics
 including false-positive cost. This README leads with the numbers, including the
 ones that are unflattering.
 
+## Run it
+
+The trained model and the scored test set are committed, so it runs immediately
+after a clone — no dataset download, no training step.
+
 ```bash
+git clone https://github.com/waseemGITHUB-CODE/predispatch-order-scorer
+cd predispatch-order-scorer
 pip install -r requirements.txt
-python -m predispatch.train                     # ~2 min, writes artifacts/
-uvicorn predispatch.api:app --app-dir src       # UI + API on :8000
+
+uvicorn predispatch.api:app --app-dir src       # open http://localhost:8000
 pytest                                          # 26 tests
 ```
+
+The UI has two tabs. **Score an order** takes a real held-out order (there are
+buttons to load one) and shows the risk, the drivers, the decision, and what
+actually happened to it. **Held-out results** is the evaluation: precision,
+recall, cost, the baseline comparisons, calibration, sensitivity, confidence
+intervals, and the rolling backtest.
+
+<details>
+<summary>Rebuilding from the raw data instead</summary>
+
+Every artifact reproduces from the original CSVs. Download the
+[Olist dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+(121 MB, free Kaggle account) and unzip the nine CSVs into `data/raw/`, then:
+
+```bash
+python -m predispatch.train       # ~2 min  -> artifacts/metrics.json, model.joblib
+python -m predispatch.backtest    # ~2 min  -> artifacts/backtest.json
+pytest
+```
+
+`train` writes every number quoted in this README. `backtest` is separate
+because it fits two models per window across five windows.
+</details>
 
 ---
 
