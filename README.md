@@ -5,12 +5,64 @@ never delivered, or delivered late. Scored *before* the parcel moves, using only
 information a merchant holds at that moment, so there is still a decision left to
 make — confirm the order, ask for prepayment, or ship it and stop worrying.
 
-> **Razorpay AI Builder Buildathon 2026** · Track: **AI Risk Manager**
-> *"Build a working detector, verifier or auto-responder for one class of loss,
-> with measured precision and recall on a held-out test set."*
-> The bar: **honest metrics including false-positive cost.** Strictly defence-only.
-
 This README leads with the numbers, including the ones that are unflattering.
+
+---
+
+# Razorpay AI Builder Buildathon 2026
+
+**Track — AI Risk Manager.** *"Stop the merchant losing money to fraud, returns
+and chargebacks."*
+
+> **The brief**
+> Build a working **detector, verifier or auto-responder** for **one class of
+> loss**, with **measured precision and recall on a held-out test set**.
+>
+> **Why now**
+> AI-enabled fraud is hitting Indian BFSI while returns and chargebacks quietly
+> eat margin. This track surfaces the risk and ML minded builders the others
+> miss.
+>
+> **Example directions**
+> Chargeback evidence responder · Return-risk scorer · Fraud-spike detector ·
+> Abuse-ring sentinel
+>
+> **The bar**
+> **Honest metrics including false-positive cost.** Strictly defence-only:
+> anything offense-capable is disqualified.
+
+This project is a **return-risk scorer**, the second of those directions, moved
+one step earlier in the timeline: it scores the order *before* dispatch, while
+a decision is still possible, rather than after a return is already in motion.
+
+## How this answers the brief, line by line
+
+| The brief asks for | This project | Where to check |
+|---|---|---|
+| **One class of loss** | One. An order not delivered as promised — cancelled, never delivered, or late. Nothing else is modelled. | [Headline](#headline) |
+| **A working detector** | FastAPI service and UI. Runs in two commands after clone; the model and scored test set are committed, so no dataset download and no training step. | [Run it](#run-it) |
+| **Measured precision and recall** | **8.1%** precision, **22.2%** recall, each with a 95% bootstrap interval over 600 resamples. | [Headline](#headline) |
+| **On a held-out test set** | 19,733 orders placed **after every order the model trained on**. Split by time, never at random — a test asserts the windows do not overlap. | [Method](#method) |
+| **Honest metrics including false-positive cost** | **R$16,455**, stated as a headline figure, not a footnote. Plus a 40-point sweep showing how far the assumed friction can be wrong before the conclusion breaks. | [How much survives the assumptions being wrong](#how-much-survives-the-assumptions-being-wrong) |
+| **Strictly defence-only** | Nothing offense-capable anywhere. No adversarial tooling, no evasion testing, no LLM, no external service, no credentials. | [Layout](#layout) |
+
+## What is reported that does not flatter it
+
+The bar says *honest*, so these are on the front page rather than omitted:
+
+- An early version showed **precision 1.000**. It was leakage — 775 orders with
+  no `order_items` row, all failures, because that table is only written once an
+  order is picked. Removing them cut PR-AUC from **0.2591 to 0.1389**. Every
+  figure here is post-fix.
+- A **one-line rule beats the model at ranking** when both flag equally often
+  (−1.3 precision points, 95% CI −2.1 to −0.6 — a real deficit, not noise).
+- The **net saving's confidence interval crosses zero** on a single window
+  (−R$52 to +R$257). Ranking is solid; the money claim is not yet statistically
+  separable from nothing.
+- The data is **Brazilian, not Indian**. Real outcomes, real freight, wrong
+  geography. The method transfers; the numbers do not.
+
+---
 
 ## Run it
 
