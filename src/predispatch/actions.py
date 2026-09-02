@@ -22,6 +22,7 @@ import json
 from dataclasses import dataclass
 
 from predispatch.config import ARTIFACTS
+from predispatch.locale import short as state_short
 
 
 @dataclass(frozen=True)
@@ -143,6 +144,10 @@ _LABELS = {
 
 def _describe(feature: str, value) -> str:
     label = _LABELS.get(feature, feature)
+    # Name the real state, not the bare code: these reasons sit beside measured
+    # numbers and have to stay traceable to the data.
+    if feature in ("customer_state", "seller_state") and isinstance(value, str):
+        return f"{label} = {state_short(value)}"
     if value is None or (isinstance(value, float) and value != value):
         return f"{label} (not supplied)"
     if isinstance(value, float) and value.is_integer():

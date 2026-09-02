@@ -23,6 +23,7 @@ from pydantic import BaseModel, Field
 
 from predispatch.actions import break_even_risk, decide, explain, load_policy
 from predispatch.config import ARTIFACTS, PROCESSED
+from predispatch.locale import as_options
 from predispatch.features import ALL_FEATURES
 
 app = FastAPI(
@@ -195,6 +196,16 @@ def backtest() -> dict:
     if not path.exists():
         raise HTTPException(404, "No backtest. Run `python -m predispatch.backtest`.")
     return json.loads(path.read_text())
+
+
+@app.get("/states")
+def states() -> list[dict]:
+    """Readable labels for the Brazilian state codes the model expects.
+
+    The UI renders `label` and posts `code`, so what a reader sees and what the
+    model receives are decoupled on purpose — see `predispatch.locale`.
+    """
+    return as_options()
 
 
 @app.get("/cloud")

@@ -21,7 +21,7 @@ cd predispatch-order-scorer
 pip install -r requirements.txt
 
 uvicorn predispatch.api:app --app-dir src       # open http://localhost:8000
-pytest                                          # 26 tests
+pytest                                          # 29 tests
 ```
 
 The UI has two tabs. **Score an order** takes a real held-out order (there are
@@ -378,6 +378,22 @@ taken from the toughest window is the safer one to quote.
 **This is Brazilian data, not Indian.** Real outcomes, real freight, wrong
 geography. The *method* transfers to an Indian merchant book; the numbers do
 not. R$ 100 per 1,000 orders is not a claim about anyone's rupees.
+
+**The state names in the UI are relabelled.** The dropdowns read
+`(SP) São Paulo — Maharashtra`: the code the model receives, the real Brazilian
+state, and the Indian state that plays the nearest role in a delivery network.
+The third of those is a **readability aid, not a data claim** — it is matched on
+role (São Paulo is 46% of buyers and 70% of sellers, so it is the hub) and not
+on any suggestion that failure rates or distances are comparable. Beyond the
+twelve largest states, which are 94% of orders, the analogy is loose and exists
+only so the list is consistent.
+
+Nothing about it reaches the model. `customer_state` and `seller_state` are
+ordinal-encoded with `unknown_value=-1`, so an Indian name posted through would
+encode as unknown and collapse both features to a constant — about 18% of the
+model's edge over chance. The `<option>` value is always the Brazilian code, the
+UI states this beneath the fields, and a test asserts it. See
+`src/predispatch/locale.py`.
 
 **The false-positive side is assumed, not measured.** Freight is real. The R$ 5
 friction cost and the 70% prevention rate are judgement calls, and the shipped

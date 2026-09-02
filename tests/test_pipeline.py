@@ -384,3 +384,45 @@ def test_backtest_each_window_beats_chance_on_ranking():
             f"window {x['window']} ranks no better than chance "
             f"({x['pr_auc']} vs {x['chance']})"
         )
+
+
+# --- state labels ----------------------------------------------------------
+
+def test_every_state_in_the_data_has_a_label(frame):
+    """A code with no entry would render as a bare `AP` beside labelled rows."""
+    from predispatch.locale import STATES
+
+    present = set(frame.customer_state) | set(frame.seller_state)
+    missing = present - set(STATES)
+    assert not missing, f"no label for {sorted(missing)}"
+
+
+def test_indian_labels_are_distinct():
+    """Two Brazilian states collapsing to one Indian name would read as a bug.
+
+    Distinctness also keeps the mapping invertible, which matters if anyone
+    ever reads a label back to a code.
+    """
+    from predispatch.locale import STATES
+
+    indian = [pair[1] for pair in STATES.values()]
+    dupes = {n for n in indian if indian.count(n) > 1}
+    assert not dupes, f"reused Indian state names: {sorted(dupes)}"
+
+
+def test_labels_never_reach_the_model():
+    """The regression this whole design exists to prevent.
+
+    `customer_state` is ordinal-encoded with `unknown_value=-1`, so posting an
+    Indian name would encode as unknown and collapse the feature to a constant,
+    silently costing ~18% of the model's edge over chance. The UI must send the
+    Brazilian code; the label is for people only.
+    """
+    from predispatch.locale import STATES, label
+
+    for code, (brazilian, indian) in STATES.items():
+        rendered = label(code)
+        assert rendered.startswith(f"({code})")
+        assert brazilian in rendered and indian in rendered
+        # the value a <option> carries is the code, never the rendered text
+        assert rendered != code or code not in STATES

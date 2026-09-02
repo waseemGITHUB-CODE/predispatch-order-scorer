@@ -224,13 +224,6 @@ main{min-width:0;display:flex;flex-direction:column}
 }
 .pill.accent{background:color-mix(in oklab,var(--accent) 16%,transparent);
   border-color:color-mix(in oklab,var(--accent) 34%,transparent);color:var(--accent-2)}
-.iconbtn{
-  width:36px;height:36px;border-radius:var(--r-ctl);display:grid;place-items:center;
-  background:none;border:1px solid var(--border);color:var(--text-2);
-  transition:background .18s var(--ease),color .18s var(--ease),border-color .18s var(--ease);
-}
-.iconbtn:hover{background:color-mix(in oklab,var(--text) 6%,transparent);color:var(--text);border-color:var(--border-2)}
-.iconbtn svg{width:17px;height:17px}
 
 /* segmented sun/moon switch with a sliding knob — transform, never left/width */
 .themetoggle{
@@ -410,6 +403,17 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
   border:1px solid color-mix(in oklab,var(--warning) 30%,transparent)}
 .band.PREPAY{background:color-mix(in oklab,var(--danger) 15%,transparent);color:var(--danger);
   border:1px solid color-mix(in oklab,var(--danger) 30%,transparent)}
+.staleflag:not(:empty){
+  font-size:12.5px;color:var(--warning);margin:0 0 10px;line-height:1.5;
+  display:flex;align-items:flex-start;gap:7px;
+}
+.staleflag:not(:empty)::before{content:'2';font-size:16px;line-height:1.1}
+/* a scored result whose inputs have since been edited is no longer current */
+.card.stale .verdict{opacity:.42;transition:opacity .25s var(--ease)}
+.btn.nudge{animation:nudge 1.6s var(--ease) infinite}
+@keyframes nudge{0%,100%{box-shadow:0 6px 18px -6px color-mix(in oklab,var(--accent) 80%,transparent)}
+  50%{box-shadow:0 6px 26px -4px color-mix(in oklab,var(--accent) 100%,transparent)}}
+@media (prefers-reduced-motion:reduce){.btn.nudge{animation:none}}
 .reasons{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
 .reasons li{
   display:flex;align-items:center;gap:11px;font-size:13.5px;color:var(--text-2);
@@ -430,6 +434,9 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
 .econ b{color:var(--text)}
 .econ code{font-family:var(--mono);font-size:12px;padding:2px 7px;border-radius:6px;
   background:color-mix(in oklab,var(--accent) 17%,transparent);color:var(--accent-2)}
+.statenote{
+  font-size:12px;color:var(--text-3);margin:14px 0 0;line-height:1.55;max-width:76ch;
+}
 .loaded{font-size:12.5px;color:var(--text-3);margin:16px 0 0;padding-top:15px;
   border-top:1px solid var(--border);line-height:1.6}
 .loaded b{color:var(--text-2)}
@@ -488,6 +495,26 @@ code{font-family:var(--mono);font-size:12px;background:color-mix(in oklab,var(--
 .reveal.in{opacity:1;transform:none;
   transition:opacity .62s var(--ease),transform .62s var(--ease)}
 .hide{display:none}
+
+/* Below this width the scene's absolutely-positioned overlays collide: the
+   control chips sit on top of the heading, and the topbar pills wrap into the
+   page title. Give the scene a normal stacked layout instead of overlaying it. */
+@media (max-width:760px){
+  /* height:auto overrides the inline 440px, which otherwise clips the legend
+     once these elements stop overlapping and start taking real space */
+  .scene{min-height:0;height:auto!important;display:flex;flex-direction:column}
+  /* DOM order puts the canvas first because it is the overlay base; stacked,
+     the heading has to come first or the picture arrives unlabelled */
+  .scene-hud{position:static;padding:16px 16px 8px;order:1}
+  .scene-hud p{display:none}          /* the heading carries it; the paragraph does not fit */
+  #cloud{order:2;height:280px;flex:none}
+  .scene-ctl{position:static;padding:12px 16px 0;flex-wrap:wrap;order:3}
+  .legend{position:static;padding:14px 16px 16px;order:4}
+  .scene::after{display:none}         /* the scrim only makes sense over an overlay */
+  .topbar{height:auto;padding:12px 16px;flex-wrap:wrap;gap:10px}
+  .crumb b{font-size:15px}
+  #p-dataset{display:none}            /* the README carries it; the bar is crowded */
+}
 
 @media (max-width:960px){
   .app{grid-template-columns:1fr}
@@ -599,13 +626,6 @@ code{font-family:var(--mono);font-size:12px;background:color-mix(in oklab,var(--
         <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
       </svg>
     </button>
-    <a class="iconbtn" href="/docs" target="_blank" title="API documentation">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-           stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-      </svg>
-    </a>
   </div>
 
   <div class="content">
@@ -683,6 +703,9 @@ code{font-family:var(--mono);font-size:12px;background:color-mix(in oklab,var(--
           Load a real low-risk order
         </button>
       </div>
+      <p class="statenote">The data is Brazilian. Indian states are the nearest
+         equivalent by role in the delivery network, shown for readability &mdash;
+         the model scores the Brazilian state.</p>
       <p class="loaded" id="loaded"></p>
     </div>
 
@@ -695,6 +718,7 @@ code{font-family:var(--mono);font-size:12px;background:color-mix(in oklab,var(--
         </div>
         <div>
           <span class="band" id="band"></span>
+        <div class="staleflag" id="staleflag"></div>
           <div id="rationale" style="font-size:13.5px;color:var(--text-2);line-height:1.65"></div>
           <ul class="reasons" id="reasons"></ul>
           <p class="econ" id="econ"></p>
@@ -940,7 +964,7 @@ const Cloud = (()=>{
   let lastProj = [];
   let pts=[], surf=[], W=0, H=0, dpr=1, yaw=-0.62, pitch=0.34, spin=true,
       filter='all', marker=null, tYaw=-0.62, tPitch=0.34, drag=null, raf=0, visible=true,
-      maxRisk=1, assembleT0=0, hoverPt=null, pinnedPt=null, breakEvenOf=null, camEase=0,
+      sized=false, maxRisk=1, assembleT0=0, hoverPt=null, pinnedPt=null, breakEvenOf=null, camEase=0,
       // camera distance: smaller = closer. Eased toward tDist so wheel and
       // button zoom both feel continuous rather than stepped.
       dist=3.4, tDist=3.4, maxFreight=1, maxDist=2600;
@@ -955,6 +979,13 @@ const Cloud = (()=>{
     W = r.width; H = r.height;
     cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);
+    // A phone-width canvas needs the camera further back, or the cloud fills
+    // the frame and the labelled axis cage falls outside it entirely. Only on
+    // first sizing, so a user's own zoom is never overridden.
+    if(!sized){
+      sized = true;
+      if(W < 520){ dist = tDist = 4.9; }
+    }
   }
   // freight is heavily right-skewed, so depth uses a log scale or the whole
   // cloud collapses against the near wall.
@@ -1069,7 +1100,13 @@ const Cloud = (()=>{
     label({x:C1,y:Y0,z:C0}, Math.round(maxDist).toLocaleString()+' km', 8, -4);
   }
 
-  let drawErr = 0;
+  let drawErr = 0, running = false;
+  function start(){
+    if(running) return;
+    running = true;
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(draw);
+  }
   function draw(){
     try{ frame(); }
     catch(e){
@@ -1151,7 +1188,9 @@ const Cloud = (()=>{
     ctx.globalCompositeOperation = C('scene-blend') || 'source-over';
     for(const {p,q} of proj){
       const a = Math.max(0, Math.min(1,(q.s-.55)*1.7));
-      const rad = (p.f?2.0:1.35)*q.s*1.5;
+      // radius scales with the canvas: fixed sizes that read well at 900px
+      // wide turn into overlapping blobs at 300px
+      const rad = (p.f?2.0:1.35)*q.s*1.5*Math.max(0.55, Math.min(W,H)/430);
       ctx.beginPath(); ctx.arc(q.sx,q.sy,rad,0,6.2832);
       ctx.fillStyle = p.f ? 'rgba('+RGB.bad+','+(a*CN('dot-bad-a'))+')'
                           : 'rgba('+RGB.ok +','+(a*CN('dot-ok-a')) +')';
@@ -1265,13 +1304,28 @@ const Cloud = (()=>{
   addEventListener('resize',resize);
   new ResizeObserver(resize).observe(cv);
   document.addEventListener('visibilitychange',()=>{
-    if(document.hidden) cancelAnimationFrame(raf); else if(visible) raf=requestAnimationFrame(draw);
+    if(document.hidden){ cancelAnimationFrame(raf); running = false; }
+    else if(visible) start();
   });
   new IntersectionObserver(es=>{
     visible = es[0].isIntersecting;
     cancelAnimationFrame(raf);
-    if(visible) raf = requestAnimationFrame(draw);
+    running = false;
+    if(visible) start();
   },{threshold:0}).observe(cv);
+
+  // Watchdog. The observer above is an optimisation — it pauses the loop when
+  // the canvas scrolls away — but it was also the only thing that could start
+  // it again. One spurious not-intersecting callback (or a canvas that begins
+  // life inside a hidden tab) cancelled the frame and nothing ever rescheduled
+  // it, leaving the whole visualisation permanently blank with no recovery.
+  // A blank hero is a far worse failure than a few wasted checks, so a timer
+  // restarts the loop whenever the canvas is on screen and not running.
+  setInterval(()=>{
+    if(document.hidden || running) return;
+    const r = cv.getBoundingClientRect();
+    if(r.width > 0 && r.bottom > 0 && r.top < innerHeight) start();
+  }, 1000);
 
   return {
     // Camera angles, exposed so the drag direction can be asserted without
@@ -1281,7 +1335,7 @@ const Cloud = (()=>{
       resize();
       const d = await (await fetch('/cloud')).json();
       load(d); this.d = d;
-      raf = requestAnimationFrame(draw);
+      start();
     },
     resize,
     setFilter(f){ filter=f; },
@@ -1309,7 +1363,18 @@ const Cloud = (()=>{
 })();
 
 /* ============================================================= form ==== */
-const STATES=["SP","RJ","MG","RS","PR","SC","BA","DF","GO","ES","PE","CE","PA","MA","MT","MS","PB","RN","PI","AL","SE","RO","TO","AC","AM","AP","RR"];
+// Filled from /states before the form is built. Each option shows the code,
+// the real Brazilian state and its nearest Indian equivalent; the value posted
+// stays the bare code, because the model is trained on those.
+let STATE_OPTIONS = [];
+const stateLabel = code => {
+  const m = STATE_OPTIONS.find(o=>o.code===code);
+  return m ? m.label : code;
+};
+const stateShort = code => {
+  const m = STATE_OPTIONS.find(o=>o.code===code);
+  return m ? m.brazilian+' ('+code+')' : code;
+};
 const FIELDS=[
   ["price_total","Item value (R$)",129.9,"number"],
   ["freight_total","Freight charged (R$)",18.5,"number"],
@@ -1324,18 +1389,33 @@ const FIELDS=[
   ["purchase_hour","Hour of purchase",14,"number"],
   ["purchase_month","Month",6,"number"],
   ["payment_type","Payment type","credit_card",["credit_card","boleto","voucher","debit_card"]],
-  ["customer_state","Customer state","BA",STATES],
-  ["seller_state","Seller state","SP",STATES],
+  ["customer_state","Customer state · Brazil (data) → India (equivalent)","BA","STATES"],
+  ["seller_state","Seller state · Brazil (data) → India (equivalent)","SP","STATES"],
   ["product_category","Category","moveis_decoracao","text"]
 ];
 const form = el('form');
-FIELDS.forEach(([name,label,dflt,type])=>{
-  const w=document.createElement('div');
-  w.innerHTML = '<label for="'+name+'">'+label+'</label>' + (Array.isArray(type)
-    ? '<select name="'+name+'">'+type.map(o=>'<option'+(o===dflt?' selected':'')+'>'+o+'</option>').join('')+'</select>'
-    : '<input name="'+name+'" type="'+type+'" step="any" value="'+dflt+'">');
-  form.appendChild(w);
-});
+function buildForm(){
+  form.innerHTML = '';
+  FIELDS.forEach(([name,label,dflt,type])=>{
+    const w=document.createElement('div');
+    let control;
+    if(type === "STATES"){
+      // value is the Brazilian code the model expects; the text is for people
+      control = '<select name="'+name+'">' + STATE_OPTIONS.map(o=>
+        '<option value="'+o.code+'"'+(o.code===dflt?' selected':'')+'>'+o.label+'</option>'
+      ).join('') + '</select>';
+    } else if(Array.isArray(type)){
+      control = '<select name="'+name+'">'+type.map(o=>
+        '<option'+(o===dflt?' selected':'')+'>'+o+'</option>').join('')+'</select>';
+    } else {
+      control = '<input name="'+name+'" type="'+type+'" step="any" value="'+dflt+'">';
+    }
+    w.innerHTML = '<label for="'+name+'">'+label+'</label>'+control;
+    form.appendChild(w);
+  });
+}
+fetch('/states').then(r=>r.json()).then(o=>{ STATE_OPTIONS = o; buildForm(); })
+  .catch(()=>{ STATE_OPTIONS = [{code:'SP',brazilian:'São Paulo',label:'SP'}]; buildForm(); });
 const read = ()=>{
   const o={};
   form.querySelectorAll('input,select').forEach(e=>{ o[e.name]= e.type==='number'?Number(e.value):e.value; });
@@ -1364,8 +1444,27 @@ function ring(risk){
 }
 
 /* =========================================================== scoring === */
+// Snapshot of the inputs at the moment of the last score. "Load a real order"
+// scores automatically, so pressing Score straight afterwards recomputes an
+// identical answer and only replays the animations — which reads as a refresh
+// that did nothing. Tracking the inputs lets the page say which it is.
+let lastScored = null;
+
+function formChanged(){
+  return JSON.stringify(read()) !== lastScored;
+}
+function markStale(){
+  const r = el('result');
+  if(r.classList.contains('hide')) return;
+  const stale = formChanged();
+  r.classList.toggle('stale', stale);
+  el('go').classList.toggle('nudge', stale);
+  el('staleflag').textContent = stale ? 'Inputs changed since this score' : '';
+}
+
 async function score(){
   const body = read();
+  const unchanged = JSON.stringify(body) === lastScored;
   const res = await fetch('/score',{method:'POST',headers:{'Content-Type':'application/json'},
                                     body:JSON.stringify(body)});
   if(!res.ok){ alert('Scoring failed: '+await res.text()); return; }
@@ -1393,6 +1492,14 @@ async function score(){
       '</li>';
   }).join('');
 
+  lastScored = JSON.stringify(body);
+  el('result').classList.remove('stale');
+  el('go').classList.remove('nudge');
+  el('staleflag').textContent = unchanged
+    ? 'Same inputs as the last score — identical result, as expected. '
+      + 'Change a field (try the freight) and score again to see the decision move.'
+    : '';
+
   const be = d.break_even_risk;
   el('econ').innerHTML =
     'Freight at stake if this order ships and fails: <b>'+money(d.expected_failure_cost)+'</b> expected. '+
@@ -1402,6 +1509,8 @@ async function score(){
         '</b>. A cheaper parcel would need a higher risk before it was.');
 }
 el('go').onclick = score;
+form.addEventListener('input', markStale);
+form.addEventListener('change', markStale);
 
 document.querySelectorAll('[data-load]').forEach(btn=>{
   btn.onclick = async ()=>{
@@ -1731,7 +1840,9 @@ fetch('/metrics').then(r=>r.json()).then(m=>{
     [title, r=>r.segment], ['Orders', r=>r.n.toLocaleString()],
     ['Failure rate', r=>P(r.failure_rate)], ['Recall', r=>P(r.recall)]
   ],rows);
-  seg('segstate','Weakest customer states', m.diagnostics.segments.by_customer_state);
+  seg('segstate','Weakest customer states',
+      m.diagnostics.segments.by_customer_state.map(r=>
+        Object.assign({}, r, {segment: stateLabel(r.segment)})));
   seg('segpay','By payment type', m.diagnostics.segments.by_payment_type);
 
   table('method',[['',r=>r.k],['',r=>r.v]],[
