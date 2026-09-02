@@ -5,10 +5,12 @@ never delivered, or delivered late. Scored *before* the parcel moves, using only
 information a merchant holds at that moment, so there is still a decision left to
 make — confirm the order, ask for prepayment, or ship it and stop worrying.
 
-Built for the AI Risk Manager track. The brief asks for a working detector with
-measured precision and recall on a held-out test set, and honest metrics
-including false-positive cost. This README leads with the numbers, including the
-ones that are unflattering.
+> **Razorpay AI Builder Buildathon 2026** · Track: **AI Risk Manager**
+> *"Build a working detector, verifier or auto-responder for one class of loss,
+> with measured precision and recall on a held-out test set."*
+> The bar: **honest metrics including false-positive cost.** Strictly defence-only.
+
+This README leads with the numbers, including the ones that are unflattering.
 
 ## Run it
 
@@ -48,6 +50,109 @@ because it fits two models per window across five windows.
 </details>
 
 ---
+
+## How it works
+
+Every box below is a real step in `python -m predispatch.train`. The two drop
+boxes in orange are places where data is deliberately thrown away — both were
+found by measurement, and both cost the headline number.
+
+```mermaid
+flowchart TB
+    subgraph prep["DATA PREPARATION"]
+        direction TB
+        CSV["9 Olist CSVs<br/>99,441 raw orders"]
+        JOIN["Join to one row per order<br/>orders · items · payments · products<br/>customers · sellers · geolocation"]
+        CENSOR["Drop censored orders<br/>still in flight, promise date not passed"]
+        EMPTY["Drop empty baskets<br/>775 orders with no order_items row<br/>all 775 are failures = structural leakage"]
+        LABEL["Label the loss<br/>cancelled OR never delivered OR late<br/>98,662 orders, 10.2% positive"]
+        CSV --> JOIN --> CENSOR --> EMPTY --> LABEL
+    end
+
+    subgraph split["CHRONOLOGICAL SPLIT — never random"]
+        direction LR
+        TRAIN["TRAIN · 78,929 orders<br/>failure rate 11.0%"]
+        HELD["HELD OUT · 19,733 orders<br/>placed after 2018-05-25<br/>failure rate 6.6%"]
+    end
+
+    subgraph build["MODEL"]
+        direction TB
+        FEAT["25 pre-dispatch features<br/>leakage audit raises on any<br/>post-outcome column"]
+        DROPH["History features built, measured, dropped<br/>PR-AUC 0.2606 to 0.2211 — base-rate drift"]
+        GBM["Gradient-boosted trees<br/>class_weight balanced"]
+        CAL["Platt calibration<br/>across 4 expanding time folds"]
+        FEAT --> DROPH --> GBM --> CAL
+    end
+
+    subgraph pick["OPERATING POINT — chosen without the test set"]
+        direction TB
+        VAL["Validation = last 25% of TRAIN<br/>failure rate 13.8%"]
+        SWEEP["Sweep the cost curve there"]
+        CHOSE["Threshold 0.1382"]
+        VAL --> SWEEP --> CHOSE
+    end
+
+    subgraph judge["EVALUATION on held-out orders"]
+        direction TB
+        THREE["Three decision policies compared"]
+        RES["Per-order expected value wins<br/>+R$1,974 vs -R$3,848 and -R$6,270"]
+        CI["600-resample bootstrap<br/>+ 40-point cost sensitivity<br/>+ 5-window rolling backtest"]
+        THREE --> RES --> CI
+    end
+
+    LABEL --> split
+    TRAIN --> FEAT
+    TRAIN --> VAL
+    CAL --> THREE
+    CHOSE --> THREE
+    HELD --> THREE
+    CI --> SERVE["FastAPI + UI<br/>ship · confirm · request prepayment"]
+
+    classDef drop fill:#7c4a03,stroke:#c2740a,color:#fff
+    classDef win fill:#0f4d33,stroke:#12b76a,color:#fff
+    class EMPTY,DROPH drop
+    class RES win
+```
+
+### The decision, for one order
+
+A single global threshold assumes every order is worth the same to save. They
+are not — the thing being protected is the freight, and freight in this data
+varies by more than an order of magnitude. So the cutoff is re-derived per
+order.
+
+```mermaid
+flowchart LR
+    ORDER["ORDER AT DISPATCH<br/>R$966.90 phone<br/>freight R$28.70<br/>SP to BA, 1,175 km<br/>26-day promise"]
+
+    FEAT["25 features<br/>nothing recorded<br/>after the outcome"]
+    MODEL["Calibrated model"]
+    RISK["risk = 23.2%"]
+
+    ECON["friction R$5.00<br/>freight out + back = R$57.40<br/>prevention 70%"]
+    BE["break-even for THIS order<br/>5.00 / 57.40 × 0.70<br/>= 12.4%"]
+
+    CMP{"23.2% vs 12.4%"}
+    ACT["CONFIRM<br/>before dispatch"]
+    SHIP["SHIP<br/>as normal"]
+    TRUTH["Actually delivered<br/>7 days late"]
+
+    ORDER --> FEAT --> MODEL --> RISK --> CMP
+    ORDER --> ECON --> BE --> CMP
+    CMP -->|"risk above break-even"| ACT
+    CMP -->|"risk below break-even"| SHIP
+    ACT -.->|"held-out truth"| TRUTH
+
+    classDef act fill:#7c4a03,stroke:#c2740a,color:#fff
+    classDef ok fill:#0f4d33,stroke:#12b76a,color:#fff
+    class ACT act
+    class SHIP ok
+```
+
+Change one number — freight R$28.70 to R$2.50 — and the break-even rises to
+143%, which no risk can clear. **Same order, same risk, opposite decision.**
+That is the whole argument, and it is why the tuned threshold below loses money
+while this does not.
 
 ## Headline
 
