@@ -1,0 +1,18 @@
+# --- data + modelling ---
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.5
+joblib>=1.4
+pyarrow>=16.0          # parquet for processed data
+
+# --- serving ---
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.7
+
+# No secrets loader and no HTTP client on purpose: this project calls
+# nothing external and holds no credentials. Everything it needs is the
+# CSVs on disk and the model it trains from them.
+
+# --- testing ---
+pytest>=8.2

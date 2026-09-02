@@ -1,0 +1,207 @@
+{
+  "generated_at": "2026-09-02 12:25:04",
+  "config": {
+    "n_windows": 5,
+    "test_fraction": 0.1,
+    "first_cut_fraction": 0.45,
+    "scheme": "expanding train, fixed-size disjoint test windows"
+  },
+  "windows": [
+    {
+      "window": 1,
+      "train_n": 44397,
+      "test_n": 9866,
+      "test_from": "2017-12-27",
+      "test_to": "2018-02-10",
+      "train_target_rate": 0.0913,
+      "validation_target_rate": 0.1473,
+      "test_target_rate": 0.0862,
+      "pr_auc": 0.1301,
+      "chance": 0.0862,
+      "chosen_threshold": 0.0677,
+      "per_order": {
+        "flag_rate": 0.104,
+        "precision": 0.1442,
+        "recall": 0.1741,
+        "net_saving": 6556.92,
+        "net_saving_per_1k_orders": 664.6
+      },
+      "tuned_threshold": {
+        "flag_rate": 0.7339,
+        "precision": 0.0972,
+        "recall": 0.8282,
+        "net_saving": -11104.88,
+        "net_saving_per_1k_orders": -1125.57
+      },
+      "fixed_flag_rate": {
+        "flag_rate": 0.4995,
+        "precision": 0.1075,
+        "recall": 0.6235,
+        "net_saving": -5202.85,
+        "net_saving_per_1k_orders": -527.35
+      },
+      "seconds": 20.3
+    },
+    {
+      "window": 2,
+      "train_n": 55496,
+      "test_n": 9866,
+      "test_from": "2018-02-15",
+      "test_to": "2018-03-28",
+      "train_target_rate": 0.092,
+      "validation_target_rate": 0.0921,
+      "test_target_rate": 0.2381,
+      "pr_auc": 0.3111,
+      "chance": 0.2381,
+      "chosen_threshold": 0.1346,
+      "per_order": {
+        "flag_rate": 0.1522,
+        "precision": 0.3109,
+        "recall": 0.1988,
+        "net_saving": 27319.87,
+        "net_saving_per_1k_orders": 2769.09
+      },
+      "tuned_threshold": {
+        "flag_rate": 0.161,
+        "precision": 0.3571,
+        "recall": 0.2414,
+        "net_saving": 18198.32,
+        "net_saving_per_1k_orders": 1844.55
+      },
+      "fixed_flag_rate": {
+        "flag_rate": 0.0697,
+        "precision": 0.4055,
+        "recall": 0.1188,
+        "net_saving": 10466.72,
+        "net_saving_per_1k_orders": 1060.89
+      },
+      "seconds": 18.8
+    },
+    {
+      "window": 3,
+      "train_n": 66596,
+      "test_n": 9866,
+      "test_from": "2018-04-03",
+      "test_to": "2018-05-14",
+      "train_target_rate": 0.1149,
+      "validation_target_rate": 0.1923,
+      "test_target_rate": 0.069,
+      "pr_auc": 0.139,
+      "chance": 0.069,
+      "chosen_threshold": 0.0865,
+      "per_order": {
+        "flag_rate": 0.201,
+        "precision": 0.1266,
+        "recall": 0.3686,
+        "net_saving": 4817.41,
+        "net_saving_per_1k_orders": 488.28
+      },
+      "tuned_threshold": {
+        "flag_rate": 0.7881,
+        "precision": 0.0756,
+        "recall": 0.8634,
+        "net_saving": -17142.6,
+        "net_saving_per_1k_orders": -1737.54
+      },
+      "fixed_flag_rate": {
+        "flag_rate": 0.5005,
+        "precision": 0.0885,
+        "recall": 0.6417,
+        "net_saving": -7988.21,
+        "net_saving_per_1k_orders": -809.67
+      },
+      "seconds": 19.5
+    },
+    {
+      "window": 4,
+      "train_n": 77696,
+      "test_n": 9866,
+      "test_from": "2018-05-17",
+      "test_to": "2018-07-10",
+      "train_target_rate": 0.11,
+      "validation_target_rate": 0.1452,
+      "test_target_rate": 0.0378,
+      "pr_auc": 0.0674,
+      "chance": 0.0378,
+      "chosen_threshold": 0.1311,
+      "per_order": {
+        "flag_rate": 0.1473,
+        "precision": 0.0578,
+        "recall": 0.2252,
+        "net_saving": -1233.46,
+        "net_saving_per_1k_orders": -125.02
+      },
+      "tuned_threshold": {
+        "flag_rate": 0.1536,
+        "precision": 0.0766,
+        "recall": 0.311,
+        "net_saving": -3193.29,
+        "net_saving_per_1k_orders": -323.67
+      },
+      "fixed_flag_rate": {
+        "flag_rate": 0.278,
+        "precision": 0.0682,
+        "recall": 0.5013,
+        "net_saving": -6953.49,
+        "net_saving_per_1k_orders": -704.79
+      },
+      "seconds": 20.9
+    },
+    {
+      "window": 5,
+      "train_n": 88796,
+      "test_n": 9866,
+      "test_from": "2018-07-18",
+      "test_to": "2018-08-29",
+      "train_target_rate": 0.1016,
+      "validation_target_rate": 0.0618,
+      "test_target_rate": 0.0997,
+      "pr_auc": 0.1868,
+      "chance": 0.0997,
+      "chosen_threshold": 0.1936,
+      "per_order": {
+        "flag_rate": 0.171,
+        "precision": 0.1025,
+        "recall": 0.1758,
+        "net_saving": 3610.98,
+        "net_saving_per_1k_orders": 366.0
+      },
+      "tuned_threshold": {
+        "flag_rate": 0.0776,
+        "precision": 0.2337,
+        "recall": 0.1819,
+        "net_saving": 1286.22,
+        "net_saving_per_1k_orders": 130.37
+      },
+      "fixed_flag_rate": {
+        "flag_rate": 0.0753,
+        "precision": 0.2342,
+        "recall": 0.1768,
+        "net_saving": 1144.88,
+        "net_saving_per_1k_orders": 116.04
+      },
+      "seconds": 22.3
+    }
+  ],
+  "summary": {
+    "n_windows": 5,
+    "per_order_profitable_in": 4,
+    "tuned_threshold_profitable_in": 2,
+    "fixed_flag_rate_profitable_in": 2,
+    "per_order_beats_both_in": 5,
+    "per_order_median_per_1k": 488.28,
+    "tuned_threshold_median_per_1k": -323.67,
+    "per_order_range_per_1k": [
+      -125.02,
+      2769.09
+    ],
+    "test_target_rate_range": [
+      0.0378,
+      0.2381
+    ],
+    "pr_auc_range": [
+      0.0674,
+      0.3111
+    ]
+  }
+}

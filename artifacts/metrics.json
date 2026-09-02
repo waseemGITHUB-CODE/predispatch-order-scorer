@@ -1,0 +1,2226 @@
+{
+  "generated_at": "2026-09-02 11:56:52",
+  "dataset": {
+    "source": "Olist Brazilian E-Commerce (Kaggle), ~100k real orders 2016-2018",
+    "orders_total": 98662,
+    "target": "order not delivered as promised (cancelled, never delivered, or late)",
+    "target_rate_overall": 0.1015
+  },
+  "split": {
+    "method": "chronological; last 20% held out and never used for fitting or tuning",
+    "boundary": "2018-05-25 09:47:21",
+    "n_train": 78929,
+    "calibration": "Platt, across 4 expanding time folds (TimeSeriesSplit)",
+    "n_test": 19733,
+    "target_rate_train": 0.1104,
+    "target_rate_test": 0.0658
+  },
+  "ranking": {
+    "pr_auc": 0.144,
+    "roc_auc": 0.718,
+    "brier": 0.0611,
+    "positive_rate_test": 0.0658
+  },
+  "at_threshold_0.5": {
+    "threshold": 0.5,
+    "flagged": 0,
+    "flag_rate": 0.0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 1299,
+    "tn": 18434,
+    "precision": 0.0,
+    "recall": 0.0,
+    "do_nothing_cost": 56749.74,
+    "cost_with_model": 56749.74,
+    "net_saving": 0.0,
+    "net_saving_per_1k_orders": 0.0,
+    "false_positive_cost": 0.0
+  },
+  "operating_point": {
+    "flagged": 3580,
+    "flag_rate": 0.1814,
+    "tp": 289,
+    "fp": 3291,
+    "fn": 1010,
+    "tn": 15143,
+    "precision": 0.0807,
+    "recall": 0.2225,
+    "do_nothing_cost": 56749.74,
+    "cost_with_model": 54776.17,
+    "net_saving": 1973.57,
+    "net_saving_per_1k_orders": 100.01,
+    "false_positive_cost": 16455.0,
+    "threshold": null,
+    "policy": "per-order expected value",
+    "detail": "flag when risk x freight x prevention > friction, which is a different cutoff for every order"
+  },
+  "policies": [
+    {
+      "flagged": 3580,
+      "flag_rate": 0.1814,
+      "tp": 289,
+      "fp": 3291,
+      "fn": 1010,
+      "tn": 15143,
+      "precision": 0.0807,
+      "recall": 0.2225,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 54776.17,
+      "net_saving": 1973.57,
+      "net_saving_per_1k_orders": 100.01,
+      "false_positive_cost": 16455.0,
+      "threshold": null,
+      "policy": "per-order expected value",
+      "detail": "flag when risk x freight x prevention > friction, which is a different cutoff for every order"
+    },
+    {
+      "threshold": 0.1382,
+      "flagged": 4416,
+      "flag_rate": 0.2238,
+      "tp": 650,
+      "fp": 3766,
+      "fn": 649,
+      "tn": 14668,
+      "precision": 0.1472,
+      "recall": 0.5004,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 60597.99,
+      "net_saving": -3848.25,
+      "net_saving_per_1k_orders": -195.02,
+      "false_positive_cost": 18830.0,
+      "policy": "tuned global threshold",
+      "detail": "flag when risk >= 0.1382, chosen on the validation window"
+    },
+    {
+      "flagged": 5377,
+      "flag_rate": 0.2725,
+      "tp": 735,
+      "fp": 4642,
+      "fn": 564,
+      "tn": 13792,
+      "precision": 0.1367,
+      "recall": 0.5658,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 63019.73,
+      "net_saving": -6269.99,
+      "net_saving_per_1k_orders": -317.74,
+      "false_positive_cost": 23210.0,
+      "threshold": 0.1302,
+      "policy": "fixed flag rate",
+      "detail": "flag the riskiest 27.3% of orders, that share chosen on the validation window"
+    }
+  ],
+  "threshold_selection": {
+    "threshold": 0.1382,
+    "chosen_on": "the last 25% of the training window (19,733 orders), scored by a model fitted only on what came before it",
+    "validation_window": [
+      "2018-03-02 14:21:54",
+      "2018-05-25 09:47:21"
+    ],
+    "validation_n": 19733,
+    "validation_target_rate": 0.1376,
+    "validation_flag_rate": 0.2725,
+    "validation_precision": 0.1971,
+    "validation_recall": 0.3904,
+    "validation_net_saving": 17454.09
+  },
+  "hindsight_best": {
+    "threshold": 0.205,
+    "flagged": 614,
+    "flag_rate": 0.0311,
+    "tp": 125,
+    "fp": 489,
+    "fn": 1174,
+    "tn": 17945,
+    "precision": 0.2036,
+    "recall": 0.0962,
+    "do_nothing_cost": 56749.74,
+    "cost_with_model": 55654.18,
+    "net_saving": 1095.56,
+    "net_saving_per_1k_orders": 55.52,
+    "false_positive_cost": 2445.0
+  },
+  "action_bands": {
+    "policy": "per-order expected value",
+    "confirm_at": 0.1921,
+    "prepay_at": 0.2322,
+    "basis": "confirm = per-order expected value (a different cutoff for every order; the median is 0.1921); prepay = 99th percentile of held-out predicted risk (worst 1% of orders)",
+    "max_predicted_risk": 0.3443
+  },
+  "cost_assumptions": {
+    "measured": {
+      "failure_cost": "freight_value x (1 + return_freight_multiplier)",
+      "return_freight_multiplier": 1.0
+    },
+    "assumed": {
+      "false_positive_friction_brl": 5.0,
+      "prevention_rate": 0.7
+    }
+  },
+  "cost_curve": [
+    {
+      "threshold": 0.1026,
+      "flagged": 9869,
+      "flag_rate": 0.5001,
+      "tp": 1024,
+      "fp": 8845,
+      "fn": 275,
+      "tn": 9589,
+      "precision": 0.1038,
+      "recall": 0.7883,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 75825.27,
+      "net_saving": -19075.53,
+      "net_saving_per_1k_orders": -966.68,
+      "false_positive_cost": 44225.0
+    },
+    {
+      "threshold": 0.1056,
+      "flagged": 9226,
+      "flag_rate": 0.4675,
+      "tp": 985,
+      "fp": 8241,
+      "fn": 314,
+      "tn": 10193,
+      "precision": 0.1068,
+      "recall": 0.7583,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 73916.69,
+      "net_saving": -17166.95,
+      "net_saving_per_1k_orders": -869.96,
+      "false_positive_cost": 41205.0
+    },
+    {
+      "threshold": 0.1086,
+      "flagged": 8624,
+      "flag_rate": 0.437,
+      "tp": 958,
+      "fp": 7666,
+      "fn": 341,
+      "tn": 10768,
+      "precision": 0.1111,
+      "recall": 0.7375,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 71898.48,
+      "net_saving": -15148.74,
+      "net_saving_per_1k_orders": -767.69,
+      "false_positive_cost": 38330.0
+    },
+    {
+      "threshold": 0.1117,
+      "flagged": 8040,
+      "flag_rate": 0.4074,
+      "tp": 926,
+      "fp": 7114,
+      "fn": 373,
+      "tn": 11320,
+      "precision": 0.1152,
+      "recall": 0.7129,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 70293.75,
+      "net_saving": -13544.01,
+      "net_saving_per_1k_orders": -686.36,
+      "false_positive_cost": 35570.0
+    },
+    {
+      "threshold": 0.1147,
+      "flagged": 7503,
+      "flag_rate": 0.3802,
+      "tp": 897,
+      "fp": 6606,
+      "fn": 402,
+      "tn": 11828,
+      "precision": 0.1196,
+      "recall": 0.6905,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 68633.95,
+      "net_saving": -11884.21,
+      "net_saving_per_1k_orders": -602.25,
+      "false_positive_cost": 33030.0
+    },
+    {
+      "threshold": 0.1177,
+      "flagged": 7004,
+      "flag_rate": 0.3549,
+      "tp": 856,
+      "fp": 6148,
+      "fn": 443,
+      "tn": 12286,
+      "precision": 0.1222,
+      "recall": 0.659,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 67196.84,
+      "net_saving": -10447.1,
+      "net_saving_per_1k_orders": -529.42,
+      "false_positive_cost": 30740.0
+    },
+    {
+      "threshold": 0.1207,
+      "flagged": 6611,
+      "flag_rate": 0.335,
+      "tp": 837,
+      "fp": 5774,
+      "fn": 462,
+      "tn": 12660,
+      "precision": 0.1266,
+      "recall": 0.6443,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 65781.51,
+      "net_saving": -9031.77,
+      "net_saving_per_1k_orders": -457.7,
+      "false_positive_cost": 28870.0
+    },
+    {
+      "threshold": 0.1237,
+      "flagged": 6198,
+      "flag_rate": 0.3141,
+      "tp": 803,
+      "fp": 5395,
+      "fn": 496,
+      "tn": 13039,
+      "precision": 0.1296,
+      "recall": 0.6182,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 64888.87,
+      "net_saving": -8139.13,
+      "net_saving_per_1k_orders": -412.46,
+      "false_positive_cost": 26975.0
+    },
+    {
+      "threshold": 0.1267,
+      "flagged": 5792,
+      "flag_rate": 0.2935,
+      "tp": 775,
+      "fp": 5017,
+      "fn": 524,
+      "tn": 13417,
+      "precision": 0.1338,
+      "recall": 0.5966,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 63673.42,
+      "net_saving": -6923.68,
+      "net_saving_per_1k_orders": -350.87,
+      "false_positive_cost": 25085.0
+    },
+    {
+      "threshold": 0.1297,
+      "flagged": 5427,
+      "flag_rate": 0.275,
+      "tp": 740,
+      "fp": 4687,
+      "fn": 559,
+      "tn": 13747,
+      "precision": 0.1364,
+      "recall": 0.5697,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 63060.92,
+      "net_saving": -6311.18,
+      "net_saving_per_1k_orders": -319.83,
+      "false_positive_cost": 23435.0
+    },
+    {
+      "threshold": 0.1327,
+      "flagged": 5060,
+      "flag_rate": 0.2564,
+      "tp": 698,
+      "fp": 4362,
+      "fn": 601,
+      "tn": 14072,
+      "precision": 0.1379,
+      "recall": 0.5373,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 62626.18,
+      "net_saving": -5876.44,
+      "net_saving_per_1k_orders": -297.8,
+      "false_positive_cost": 21810.0
+    },
+    {
+      "threshold": 0.1357,
+      "flagged": 4710,
+      "flag_rate": 0.2387,
+      "tp": 670,
+      "fp": 4040,
+      "fn": 629,
+      "tn": 14394,
+      "precision": 0.1423,
+      "recall": 0.5158,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 61642.0,
+      "net_saving": -4892.26,
+      "net_saving_per_1k_orders": -247.92,
+      "false_positive_cost": 20200.0
+    },
+    {
+      "threshold": 0.1388,
+      "flagged": 4369,
+      "flag_rate": 0.2214,
+      "tp": 647,
+      "fp": 3722,
+      "fn": 652,
+      "tn": 14712,
+      "precision": 0.1481,
+      "recall": 0.4981,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 60451.08,
+      "net_saving": -3701.34,
+      "net_saving_per_1k_orders": -187.57,
+      "false_positive_cost": 18610.0
+    },
+    {
+      "threshold": 0.1418,
+      "flagged": 4088,
+      "flag_rate": 0.2072,
+      "tp": 615,
+      "fp": 3473,
+      "fn": 684,
+      "tn": 14961,
+      "precision": 0.1504,
+      "recall": 0.4734,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 60092.34,
+      "net_saving": -3342.6,
+      "net_saving_per_1k_orders": -169.39,
+      "false_positive_cost": 17365.0
+    },
+    {
+      "threshold": 0.1448,
+      "flagged": 3780,
+      "flag_rate": 0.1916,
+      "tp": 581,
+      "fp": 3199,
+      "fn": 718,
+      "tn": 15235,
+      "precision": 0.1537,
+      "recall": 0.4473,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 59638.22,
+      "net_saving": -2888.48,
+      "net_saving_per_1k_orders": -146.38,
+      "false_positive_cost": 15995.0
+    },
+    {
+      "threshold": 0.1478,
+      "flagged": 3519,
+      "flag_rate": 0.1783,
+      "tp": 544,
+      "fp": 2975,
+      "fn": 755,
+      "tn": 15459,
+      "precision": 0.1546,
+      "recall": 0.4188,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 59070.61,
+      "net_saving": -2320.87,
+      "net_saving_per_1k_orders": -117.61,
+      "false_positive_cost": 14875.0
+    },
+    {
+      "threshold": 0.1508,
+      "flagged": 3270,
+      "flag_rate": 0.1657,
+      "tp": 514,
+      "fp": 2756,
+      "fn": 785,
+      "tn": 15678,
+      "precision": 0.1572,
+      "recall": 0.3957,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 58501.0,
+      "net_saving": -1751.26,
+      "net_saving_per_1k_orders": -88.75,
+      "false_positive_cost": 13780.0
+    },
+    {
+      "threshold": 0.1538,
+      "flagged": 3051,
+      "flag_rate": 0.1546,
+      "tp": 489,
+      "fp": 2562,
+      "fn": 810,
+      "tn": 15872,
+      "precision": 0.1603,
+      "recall": 0.3764,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 57954.41,
+      "net_saving": -1204.67,
+      "net_saving_per_1k_orders": -61.05,
+      "false_positive_cost": 12810.0
+    },
+    {
+      "threshold": 0.1568,
+      "flagged": 2841,
+      "flag_rate": 0.144,
+      "tp": 463,
+      "fp": 2378,
+      "fn": 836,
+      "tn": 16056,
+      "precision": 0.163,
+      "recall": 0.3564,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 57657.32,
+      "net_saving": -907.58,
+      "net_saving_per_1k_orders": -45.99,
+      "false_positive_cost": 11890.0
+    },
+    {
+      "threshold": 0.1598,
+      "flagged": 2651,
+      "flag_rate": 0.1343,
+      "tp": 437,
+      "fp": 2214,
+      "fn": 862,
+      "tn": 16220,
+      "precision": 0.1648,
+      "recall": 0.3364,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 57338.53,
+      "net_saving": -588.79,
+      "net_saving_per_1k_orders": -29.84,
+      "false_positive_cost": 11070.0
+    },
+    {
+      "threshold": 0.1628,
+      "flagged": 2462,
+      "flag_rate": 0.1248,
+      "tp": 410,
+      "fp": 2052,
+      "fn": 889,
+      "tn": 16382,
+      "precision": 0.1665,
+      "recall": 0.3156,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 57002.95,
+      "net_saving": -253.21,
+      "net_saving_per_1k_orders": -12.83,
+      "false_positive_cost": 10260.0
+    },
+    {
+      "threshold": 0.1659,
+      "flagged": 2265,
+      "flag_rate": 0.1148,
+      "tp": 380,
+      "fp": 1885,
+      "fn": 919,
+      "tn": 16549,
+      "precision": 0.1678,
+      "recall": 0.2925,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56853.74,
+      "net_saving": -104.0,
+      "net_saving_per_1k_orders": -5.27,
+      "false_positive_cost": 9425.0
+    },
+    {
+      "threshold": 0.1689,
+      "flagged": 2067,
+      "flag_rate": 0.1047,
+      "tp": 345,
+      "fp": 1722,
+      "fn": 954,
+      "tn": 16712,
+      "precision": 0.1669,
+      "recall": 0.2656,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56658.86,
+      "net_saving": 90.88,
+      "net_saving_per_1k_orders": 4.61,
+      "false_positive_cost": 8610.0
+    },
+    {
+      "threshold": 0.1719,
+      "flagged": 1886,
+      "flag_rate": 0.0956,
+      "tp": 322,
+      "fp": 1564,
+      "fn": 977,
+      "tn": 16870,
+      "precision": 0.1707,
+      "recall": 0.2479,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56511.55,
+      "net_saving": 238.19,
+      "net_saving_per_1k_orders": 12.07,
+      "false_positive_cost": 7820.0
+    },
+    {
+      "threshold": 0.1749,
+      "flagged": 1728,
+      "flag_rate": 0.0876,
+      "tp": 300,
+      "fp": 1428,
+      "fn": 999,
+      "tn": 17006,
+      "precision": 0.1736,
+      "recall": 0.2309,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56362.33,
+      "net_saving": 387.41,
+      "net_saving_per_1k_orders": 19.63,
+      "false_positive_cost": 7140.0
+    },
+    {
+      "threshold": 0.1779,
+      "flagged": 1567,
+      "flag_rate": 0.0794,
+      "tp": 280,
+      "fp": 1287,
+      "fn": 1019,
+      "tn": 17147,
+      "precision": 0.1787,
+      "recall": 0.2156,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56179.41,
+      "net_saving": 570.33,
+      "net_saving_per_1k_orders": 28.9,
+      "false_positive_cost": 6435.0
+    },
+    {
+      "threshold": 0.1809,
+      "flagged": 1438,
+      "flag_rate": 0.0729,
+      "tp": 253,
+      "fp": 1185,
+      "fn": 1046,
+      "tn": 17249,
+      "precision": 0.1759,
+      "recall": 0.1948,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56152.53,
+      "net_saving": 597.21,
+      "net_saving_per_1k_orders": 30.26,
+      "false_positive_cost": 5925.0
+    },
+    {
+      "threshold": 0.1839,
+      "flagged": 1323,
+      "flag_rate": 0.067,
+      "tp": 237,
+      "fp": 1086,
+      "fn": 1062,
+      "tn": 17348,
+      "precision": 0.1791,
+      "recall": 0.1824,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56183.13,
+      "net_saving": 566.61,
+      "net_saving_per_1k_orders": 28.71,
+      "false_positive_cost": 5430.0
+    },
+    {
+      "threshold": 0.1869,
+      "flagged": 1219,
+      "flag_rate": 0.0618,
+      "tp": 222,
+      "fp": 997,
+      "fn": 1077,
+      "tn": 17437,
+      "precision": 0.1821,
+      "recall": 0.1709,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56025.48,
+      "net_saving": 724.26,
+      "net_saving_per_1k_orders": 36.7,
+      "false_positive_cost": 4985.0
+    },
+    {
+      "threshold": 0.1899,
+      "flagged": 1101,
+      "flag_rate": 0.0558,
+      "tp": 205,
+      "fp": 896,
+      "fn": 1094,
+      "tn": 17538,
+      "precision": 0.1862,
+      "recall": 0.1578,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56044.58,
+      "net_saving": 705.16,
+      "net_saving_per_1k_orders": 35.74,
+      "false_positive_cost": 4480.0
+    },
+    {
+      "threshold": 0.1929,
+      "flagged": 998,
+      "flag_rate": 0.0506,
+      "tp": 184,
+      "fp": 814,
+      "fn": 1115,
+      "tn": 17620,
+      "precision": 0.1844,
+      "recall": 0.1416,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56043.7,
+      "net_saving": 706.04,
+      "net_saving_per_1k_orders": 35.78,
+      "false_positive_cost": 4070.0
+    },
+    {
+      "threshold": 0.196,
+      "flagged": 893,
+      "flag_rate": 0.0453,
+      "tp": 173,
+      "fp": 720,
+      "fn": 1126,
+      "tn": 17714,
+      "precision": 0.1937,
+      "recall": 0.1332,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 55768.31,
+      "net_saving": 981.43,
+      "net_saving_per_1k_orders": 49.74,
+      "false_positive_cost": 3600.0
+    },
+    {
+      "threshold": 0.199,
+      "flagged": 804,
+      "flag_rate": 0.0407,
+      "tp": 155,
+      "fp": 649,
+      "fn": 1144,
+      "tn": 17785,
+      "precision": 0.1928,
+      "recall": 0.1193,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 55848.89,
+      "net_saving": 900.85,
+      "net_saving_per_1k_orders": 45.65,
+      "false_positive_cost": 3245.0
+    },
+    {
+      "threshold": 0.202,
+      "flagged": 695,
+      "flag_rate": 0.0352,
+      "tp": 139,
+      "fp": 556,
+      "fn": 1160,
+      "tn": 17878,
+      "precision": 0.2,
+      "recall": 0.107,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 55738.1,
+      "net_saving": 1011.64,
+      "net_saving_per_1k_orders": 51.27,
+      "false_positive_cost": 2780.0
+    },
+    {
+      "threshold": 0.205,
+      "flagged": 614,
+      "flag_rate": 0.0311,
+      "tp": 125,
+      "fp": 489,
+      "fn": 1174,
+      "tn": 17945,
+      "precision": 0.2036,
+      "recall": 0.0962,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 55654.18,
+      "net_saving": 1095.56,
+      "net_saving_per_1k_orders": 55.52,
+      "false_positive_cost": 2445.0
+    },
+    {
+      "threshold": 0.208,
+      "flagged": 530,
+      "flag_rate": 0.0269,
+      "tp": 107,
+      "fp": 423,
+      "fn": 1192,
+      "tn": 18011,
+      "precision": 0.2019,
+      "recall": 0.0824,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56052.17,
+      "net_saving": 697.57,
+      "net_saving_per_1k_orders": 35.35,
+      "false_positive_cost": 2115.0
+    },
+    {
+      "threshold": 0.211,
+      "flagged": 466,
+      "flag_rate": 0.0236,
+      "tp": 94,
+      "fp": 372,
+      "fn": 1205,
+      "tn": 18062,
+      "precision": 0.2017,
+      "recall": 0.0724,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56100.22,
+      "net_saving": 649.52,
+      "net_saving_per_1k_orders": 32.92,
+      "false_positive_cost": 1860.0
+    },
+    {
+      "threshold": 0.214,
+      "flagged": 412,
+      "flag_rate": 0.0209,
+      "tp": 82,
+      "fp": 330,
+      "fn": 1217,
+      "tn": 18104,
+      "precision": 0.199,
+      "recall": 0.0631,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56209.18,
+      "net_saving": 540.56,
+      "net_saving_per_1k_orders": 27.39,
+      "false_positive_cost": 1650.0
+    },
+    {
+      "threshold": 0.217,
+      "flagged": 373,
+      "flag_rate": 0.0189,
+      "tp": 76,
+      "fp": 297,
+      "fn": 1223,
+      "tn": 18137,
+      "precision": 0.2038,
+      "recall": 0.0585,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56121.02,
+      "net_saving": 628.72,
+      "net_saving_per_1k_orders": 31.86,
+      "false_positive_cost": 1485.0
+    },
+    {
+      "threshold": 0.22,
+      "flagged": 330,
+      "flag_rate": 0.0167,
+      "tp": 70,
+      "fp": 260,
+      "fn": 1229,
+      "tn": 18174,
+      "precision": 0.2121,
+      "recall": 0.0539,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56078.09,
+      "net_saving": 671.65,
+      "net_saving_per_1k_orders": 34.04,
+      "false_positive_cost": 1300.0
+    },
+    {
+      "threshold": 0.2231,
+      "flagged": 291,
+      "flag_rate": 0.0147,
+      "tp": 60,
+      "fp": 231,
+      "fn": 1239,
+      "tn": 18203,
+      "precision": 0.2062,
+      "recall": 0.0462,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56137.64,
+      "net_saving": 612.1,
+      "net_saving_per_1k_orders": 31.02,
+      "false_positive_cost": 1155.0
+    },
+    {
+      "threshold": 0.2261,
+      "flagged": 252,
+      "flag_rate": 0.0128,
+      "tp": 55,
+      "fp": 197,
+      "fn": 1244,
+      "tn": 18237,
+      "precision": 0.2183,
+      "recall": 0.0423,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56254.32,
+      "net_saving": 495.42,
+      "net_saving_per_1k_orders": 25.11,
+      "false_positive_cost": 985.0
+    },
+    {
+      "threshold": 0.2291,
+      "flagged": 227,
+      "flag_rate": 0.0115,
+      "tp": 48,
+      "fp": 179,
+      "fn": 1251,
+      "tn": 18255,
+      "precision": 0.2115,
+      "recall": 0.037,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56254.85,
+      "net_saving": 494.89,
+      "net_saving_per_1k_orders": 25.08,
+      "false_positive_cost": 895.0
+    },
+    {
+      "threshold": 0.2321,
+      "flagged": 198,
+      "flag_rate": 0.01,
+      "tp": 45,
+      "fp": 153,
+      "fn": 1254,
+      "tn": 18281,
+      "precision": 0.2273,
+      "recall": 0.0346,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56182.16,
+      "net_saving": 567.58,
+      "net_saving_per_1k_orders": 28.76,
+      "false_positive_cost": 765.0
+    },
+    {
+      "threshold": 0.2351,
+      "flagged": 171,
+      "flag_rate": 0.0087,
+      "tp": 41,
+      "fp": 130,
+      "fn": 1258,
+      "tn": 18304,
+      "precision": 0.2398,
+      "recall": 0.0316,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56117.02,
+      "net_saving": 632.72,
+      "net_saving_per_1k_orders": 32.06,
+      "false_positive_cost": 650.0
+    },
+    {
+      "threshold": 0.2381,
+      "flagged": 151,
+      "flag_rate": 0.0077,
+      "tp": 36,
+      "fp": 115,
+      "fn": 1263,
+      "tn": 18319,
+      "precision": 0.2384,
+      "recall": 0.0277,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56139.21,
+      "net_saving": 610.53,
+      "net_saving_per_1k_orders": 30.94,
+      "false_positive_cost": 575.0
+    },
+    {
+      "threshold": 0.2411,
+      "flagged": 124,
+      "flag_rate": 0.0063,
+      "tp": 27,
+      "fp": 97,
+      "fn": 1272,
+      "tn": 18337,
+      "precision": 0.2177,
+      "recall": 0.0208,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56189.13,
+      "net_saving": 560.61,
+      "net_saving_per_1k_orders": 28.41,
+      "false_positive_cost": 485.0
+    },
+    {
+      "threshold": 0.2441,
+      "flagged": 110,
+      "flag_rate": 0.0056,
+      "tp": 25,
+      "fp": 85,
+      "fn": 1274,
+      "tn": 18349,
+      "precision": 0.2273,
+      "recall": 0.0192,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56150.68,
+      "net_saving": 599.06,
+      "net_saving_per_1k_orders": 30.36,
+      "false_positive_cost": 425.0
+    },
+    {
+      "threshold": 0.2471,
+      "flagged": 92,
+      "flag_rate": 0.0047,
+      "tp": 20,
+      "fp": 72,
+      "fn": 1279,
+      "tn": 18362,
+      "precision": 0.2174,
+      "recall": 0.0154,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56302.82,
+      "net_saving": 446.92,
+      "net_saving_per_1k_orders": 22.65,
+      "false_positive_cost": 360.0
+    },
+    {
+      "threshold": 0.2502,
+      "flagged": 79,
+      "flag_rate": 0.004,
+      "tp": 19,
+      "fp": 60,
+      "fn": 1280,
+      "tn": 18374,
+      "precision": 0.2405,
+      "recall": 0.0146,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56305.75,
+      "net_saving": 443.99,
+      "net_saving_per_1k_orders": 22.5,
+      "false_positive_cost": 300.0
+    },
+    {
+      "threshold": 0.2532,
+      "flagged": 65,
+      "flag_rate": 0.0033,
+      "tp": 18,
+      "fp": 47,
+      "fn": 1281,
+      "tn": 18387,
+      "precision": 0.2769,
+      "recall": 0.0139,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56246.15,
+      "net_saving": 503.59,
+      "net_saving_per_1k_orders": 25.52,
+      "false_positive_cost": 235.0
+    },
+    {
+      "threshold": 0.2562,
+      "flagged": 56,
+      "flag_rate": 0.0028,
+      "tp": 15,
+      "fp": 41,
+      "fn": 1284,
+      "tn": 18393,
+      "precision": 0.2679,
+      "recall": 0.0115,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56235.42,
+      "net_saving": 514.32,
+      "net_saving_per_1k_orders": 26.06,
+      "false_positive_cost": 205.0
+    },
+    {
+      "threshold": 0.2592,
+      "flagged": 50,
+      "flag_rate": 0.0025,
+      "tp": 13,
+      "fp": 37,
+      "fn": 1286,
+      "tn": 18397,
+      "precision": 0.26,
+      "recall": 0.01,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56256.16,
+      "net_saving": 493.58,
+      "net_saving_per_1k_orders": 25.01,
+      "false_positive_cost": 185.0
+    },
+    {
+      "threshold": 0.2622,
+      "flagged": 44,
+      "flag_rate": 0.0022,
+      "tp": 12,
+      "fp": 32,
+      "fn": 1287,
+      "tn": 18402,
+      "precision": 0.2727,
+      "recall": 0.0092,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56238.28,
+      "net_saving": 511.46,
+      "net_saving_per_1k_orders": 25.92,
+      "false_positive_cost": 160.0
+    },
+    {
+      "threshold": 0.2652,
+      "flagged": 35,
+      "flag_rate": 0.0018,
+      "tp": 9,
+      "fp": 26,
+      "fn": 1290,
+      "tn": 18408,
+      "precision": 0.2571,
+      "recall": 0.0069,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56374.57,
+      "net_saving": 375.17,
+      "net_saving_per_1k_orders": 19.01,
+      "false_positive_cost": 130.0
+    },
+    {
+      "threshold": 0.2682,
+      "flagged": 32,
+      "flag_rate": 0.0016,
+      "tp": 9,
+      "fp": 23,
+      "fn": 1290,
+      "tn": 18411,
+      "precision": 0.2812,
+      "recall": 0.0069,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56359.57,
+      "net_saving": 390.17,
+      "net_saving_per_1k_orders": 19.77,
+      "false_positive_cost": 115.0
+    },
+    {
+      "threshold": 0.2712,
+      "flagged": 30,
+      "flag_rate": 0.0015,
+      "tp": 8,
+      "fp": 22,
+      "fn": 1291,
+      "tn": 18412,
+      "precision": 0.2667,
+      "recall": 0.0062,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56557.1,
+      "net_saving": 192.64,
+      "net_saving_per_1k_orders": 9.76,
+      "false_positive_cost": 110.0
+    },
+    {
+      "threshold": 0.2742,
+      "flagged": 23,
+      "flag_rate": 0.0012,
+      "tp": 6,
+      "fp": 17,
+      "fn": 1293,
+      "tn": 18417,
+      "precision": 0.2609,
+      "recall": 0.0046,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56584.22,
+      "net_saving": 165.52,
+      "net_saving_per_1k_orders": 8.39,
+      "false_positive_cost": 85.0
+    },
+    {
+      "threshold": 0.2773,
+      "flagged": 21,
+      "flag_rate": 0.0011,
+      "tp": 4,
+      "fp": 17,
+      "fn": 1295,
+      "tn": 18417,
+      "precision": 0.1905,
+      "recall": 0.0031,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56629.03,
+      "net_saving": 120.71,
+      "net_saving_per_1k_orders": 6.12,
+      "false_positive_cost": 85.0
+    },
+    {
+      "threshold": 0.2803,
+      "flagged": 20,
+      "flag_rate": 0.001,
+      "tp": 3,
+      "fp": 17,
+      "fn": 1296,
+      "tn": 18417,
+      "precision": 0.15,
+      "recall": 0.0023,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 56733.2,
+      "net_saving": 16.54,
+      "net_saving_per_1k_orders": 0.84,
+      "false_positive_cost": 85.0
+    }
+  ],
+  "baselines": [
+    {
+      "threshold": 0.5,
+      "flagged": 19733,
+      "flag_rate": 1.0,
+      "tp": 1299,
+      "fp": 18434,
+      "fn": 0,
+      "tn": 0,
+      "precision": 0.0658,
+      "recall": 1.0,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 115689.92,
+      "net_saving": -58940.18,
+      "net_saving_per_1k_orders": -2986.88,
+      "false_positive_cost": 92170.0,
+      "name": "flag_all"
+    },
+    {
+      "threshold": 0.5,
+      "flagged": 11721,
+      "flag_rate": 0.594,
+      "tp": 494,
+      "fp": 11227,
+      "fn": 805,
+      "tn": 7207,
+      "precision": 0.0421,
+      "recall": 0.3803,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 92252.36,
+      "net_saving": -35502.62,
+      "net_saving_per_1k_orders": -1799.15,
+      "false_positive_cost": 56135.0,
+      "name": "cross_state"
+    },
+    {
+      "threshold": 0.5,
+      "flagged": 4934,
+      "flag_rate": 0.25,
+      "tp": 248,
+      "fp": 4686,
+      "fn": 1051,
+      "tn": 13748,
+      "precision": 0.0503,
+      "recall": 0.1909,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 68957.44,
+      "net_saving": -12207.7,
+      "net_saving_per_1k_orders": -618.64,
+      "false_positive_cost": 23430.0,
+      "name": "long_distance_top25pct"
+    },
+    {
+      "threshold": 0.5,
+      "flagged": 5504,
+      "flag_rate": 0.2789,
+      "tp": 822,
+      "fp": 4682,
+      "fn": 477,
+      "tn": 13752,
+      "precision": 0.1493,
+      "recall": 0.6328,
+      "do_nothing_cost": 56749.74,
+      "cost_with_model": 65905.6,
+      "net_saving": -9155.86,
+      "net_saving_per_1k_orders": -463.99,
+      "false_positive_cost": 23410.0,
+      "name": "tight_promise_bottom25pct"
+    }
+  ],
+  "n_features": 25,
+  "sensitivity": {
+    "shipped_assumptions": {
+      "friction": 5.0,
+      "prevention": 0.7,
+      "net_saving": 1973.57
+    },
+    "grid": [
+      {
+        "friction": 0.5,
+        "prevention": 0.3,
+        "flag_rate": 0.9441,
+        "precision": 0.0675,
+        "recall": 0.9684,
+        "net_saving": 7497.49,
+        "net_saving_per_1k_orders": 379.95
+      },
+      {
+        "friction": 1.0,
+        "prevention": 0.3,
+        "flag_rate": 0.5495,
+        "precision": 0.0705,
+        "recall": 0.5881,
+        "net_saving": 2701.74,
+        "net_saving_per_1k_orders": 136.91
+      },
+      {
+        "friction": 2.0,
+        "prevention": 0.3,
+        "flag_rate": 0.2015,
+        "precision": 0.0774,
+        "recall": 0.2371,
+        "net_saving": 846.69,
+        "net_saving_per_1k_orders": 42.91
+      },
+      {
+        "friction": 3.0,
+        "prevention": 0.3,
+        "flag_rate": 0.1061,
+        "precision": 0.0827,
+        "recall": 0.1332,
+        "net_saving": 195.78,
+        "net_saving_per_1k_orders": 9.92
+      },
+      {
+        "friction": 5.0,
+        "prevention": 0.3,
+        "flag_rate": 0.0392,
+        "precision": 0.0879,
+        "recall": 0.0523,
+        "net_saving": -159.71,
+        "net_saving_per_1k_orders": -8.09
+      },
+      {
+        "friction": 7.5,
+        "prevention": 0.3,
+        "flag_rate": 0.0153,
+        "precision": 0.093,
+        "recall": 0.0216,
+        "net_saving": -158.93,
+        "net_saving_per_1k_orders": -8.05
+      },
+      {
+        "friction": 10.0,
+        "prevention": 0.3,
+        "flag_rate": 0.0078,
+        "precision": 0.1307,
+        "recall": 0.0154,
+        "net_saving": 85.4,
+        "net_saving_per_1k_orders": 4.33
+      },
+      {
+        "friction": 15.0,
+        "prevention": 0.3,
+        "flag_rate": 0.0021,
+        "precision": 0.1429,
+        "recall": 0.0046,
+        "net_saving": 3.23,
+        "net_saving_per_1k_orders": 0.16
+      },
+      {
+        "friction": 20.0,
+        "prevention": 0.3,
+        "flag_rate": 0.0007,
+        "precision": 0.2308,
+        "recall": 0.0023,
+        "net_saving": 59.84,
+        "net_saving_per_1k_orders": 3.03
+      },
+      {
+        "friction": 30.0,
+        "prevention": 0.3,
+        "flag_rate": 0.0002,
+        "precision": 0.0,
+        "recall": 0.0,
+        "net_saving": -90.0,
+        "net_saving_per_1k_orders": -4.56
+      },
+      {
+        "friction": 0.5,
+        "prevention": 0.5,
+        "flag_rate": 0.9962,
+        "precision": 0.0661,
+        "recall": 1.0,
+        "net_saving": 18545.87,
+        "net_saving_per_1k_orders": 939.84
+      },
+      {
+        "friction": 1.0,
+        "prevention": 0.5,
+        "flag_rate": 0.8838,
+        "precision": 0.0683,
+        "recall": 0.9176,
+        "net_saving": 10000.73,
+        "net_saving_per_1k_orders": 506.8
+      },
+      {
+        "friction": 2.0,
+        "prevention": 0.5,
+        "flag_rate": 0.4312,
+        "precision": 0.0738,
+        "recall": 0.4834,
+        "net_saving": 3662.75,
+        "net_saving_per_1k_orders": 185.62
+      },
+      {
+        "friction": 3.0,
+        "prevention": 0.5,
+        "flag_rate": 0.2357,
+        "precision": 0.0774,
+        "recall": 0.2771,
+        "net_saving": 1875.0,
+        "net_saving_per_1k_orders": 95.02
+      },
+      {
+        "friction": 5.0,
+        "prevention": 0.5,
+        "flag_rate": 0.1061,
+        "precision": 0.0827,
+        "recall": 0.1332,
+        "net_saving": 326.3,
+        "net_saving_per_1k_orders": 16.54
+      },
+      {
+        "friction": 7.5,
+        "prevention": 0.5,
+        "flag_rate": 0.0492,
+        "precision": 0.0886,
+        "recall": 0.0662,
+        "net_saving": -121.23,
+        "net_saving_per_1k_orders": -6.14
+      },
+      {
+        "friction": 10.0,
+        "prevention": 0.5,
+        "flag_rate": 0.0266,
+        "precision": 0.0857,
+        "recall": 0.0346,
+        "net_saving": -492.25,
+        "net_saving_per_1k_orders": -24.95
+      },
+      {
+        "friction": 15.0,
+        "prevention": 0.5,
+        "flag_rate": 0.0098,
+        "precision": 0.1082,
+        "recall": 0.0162,
+        "net_saving": -75.01,
+        "net_saving_per_1k_orders": -3.8
+      },
+      {
+        "friction": 20.0,
+        "prevention": 0.5,
+        "flag_rate": 0.0045,
+        "precision": 0.125,
+        "recall": 0.0085,
+        "net_saving": -24.79,
+        "net_saving_per_1k_orders": -1.26
+      },
+      {
+        "friction": 30.0,
+        "prevention": 0.5,
+        "flag_rate": 0.0011,
+        "precision": 0.1905,
+        "recall": 0.0031,
+        "net_saving": 74.94,
+        "net_saving_per_1k_orders": 3.8
+      },
+      {
+        "friction": 0.5,
+        "prevention": 0.7,
+        "flag_rate": 0.9997,
+        "precision": 0.0658,
+        "recall": 1.0,
+        "net_saving": 29861.32,
+        "net_saving_per_1k_orders": 1513.27
+      },
+      {
+        "friction": 1.0,
+        "prevention": 0.7,
+        "flag_rate": 0.9722,
+        "precision": 0.0669,
+        "recall": 0.9877,
+        "net_saving": 20367.04,
+        "net_saving_per_1k_orders": 1032.13
+      },
+      {
+        "friction": 2.0,
+        "prevention": 0.7,
+        "flag_rate": 0.6608,
+        "precision": 0.071,
+        "recall": 0.7129,
+        "net_saving": 8450.93,
+        "net_saving_per_1k_orders": 428.26
+      },
+      {
+        "friction": 3.0,
+        "prevention": 0.7,
+        "flag_rate": 0.392,
+        "precision": 0.0754,
+        "recall": 0.4488,
+        "net_saving": 4804.42,
+        "net_saving_per_1k_orders": 243.47
+      },
+      {
+        "friction": 5.0,
+        "prevention": 0.7,
+        "flag_rate": 0.1814,
+        "precision": 0.0807,
+        "recall": 0.2225,
+        "net_saving": 1973.57,
+        "net_saving_per_1k_orders": 100.01
+      },
+      {
+        "friction": 7.5,
+        "prevention": 0.7,
+        "flag_rate": 0.0946,
+        "precision": 0.0852,
+        "recall": 0.1224,
+        "net_saving": 506.72,
+        "net_saving_per_1k_orders": 25.68
+      },
+      {
+        "friction": 10.0,
+        "prevention": 0.7,
+        "flag_rate": 0.0547,
+        "precision": 0.089,
+        "recall": 0.0739,
+        "net_saving": 1.97,
+        "net_saving_per_1k_orders": 0.1
+      },
+      {
+        "friction": 15.0,
+        "prevention": 0.7,
+        "flag_rate": 0.0227,
+        "precision": 0.0917,
+        "recall": 0.0316,
+        "net_saving": -360.26,
+        "net_saving_per_1k_orders": -18.26
+      },
+      {
+        "friction": 20.0,
+        "prevention": 0.7,
+        "flag_rate": 0.0108,
+        "precision": 0.1121,
+        "recall": 0.0185,
+        "net_saving": 158.66,
+        "net_saving_per_1k_orders": 8.04
+      },
+      {
+        "friction": 30.0,
+        "prevention": 0.7,
+        "flag_rate": 0.0036,
+        "precision": 0.1389,
+        "recall": 0.0077,
+        "net_saving": -38.76,
+        "net_saving_per_1k_orders": -1.96
+      },
+      {
+        "friction": 0.5,
+        "prevention": 0.9,
+        "flag_rate": 0.9997,
+        "precision": 0.0658,
+        "recall": 1.0,
+        "net_saving": 41210.77,
+        "net_saving_per_1k_orders": 2088.42
+      },
+      {
+        "friction": 1.0,
+        "prevention": 0.9,
+        "flag_rate": 0.9924,
+        "precision": 0.0662,
+        "recall": 0.9977,
+        "net_saving": 31448.09,
+        "net_saving_per_1k_orders": 1593.68
+      },
+      {
+        "friction": 2.0,
+        "prevention": 0.9,
+        "flag_rate": 0.831,
+        "precision": 0.069,
+        "recall": 0.8714,
+        "net_saving": 15572.64,
+        "net_saving_per_1k_orders": 789.17
+      },
+      {
+        "friction": 3.0,
+        "prevention": 0.9,
+        "flag_rate": 0.5495,
+        "precision": 0.0705,
+        "recall": 0.5881,
+        "net_saving": 8105.23,
+        "net_saving_per_1k_orders": 410.74
+      },
+      {
+        "friction": 5.0,
+        "prevention": 0.9,
+        "flag_rate": 0.2674,
+        "precision": 0.0787,
+        "recall": 0.3195,
+        "net_saving": 4248.62,
+        "net_saving_per_1k_orders": 215.31
+      },
+      {
+        "friction": 7.5,
+        "prevention": 0.9,
+        "flag_rate": 0.1417,
+        "precision": 0.079,
+        "recall": 0.1701,
+        "net_saving": 1329.67,
+        "net_saving_per_1k_orders": 67.38
+      },
+      {
+        "friction": 10.0,
+        "prevention": 0.9,
+        "flag_rate": 0.0888,
+        "precision": 0.0856,
+        "recall": 0.1155,
+        "net_saving": 476.71,
+        "net_saving_per_1k_orders": 24.16
+      },
+      {
+        "friction": 15.0,
+        "prevention": 0.9,
+        "flag_rate": 0.0392,
+        "precision": 0.0879,
+        "recall": 0.0523,
+        "net_saving": -479.14,
+        "net_saving_per_1k_orders": -24.28
+      },
+      {
+        "friction": 20.0,
+        "prevention": 0.9,
+        "flag_rate": 0.0208,
+        "precision": 0.0902,
+        "recall": 0.0285,
+        "net_saving": -462.34,
+        "net_saving_per_1k_orders": -23.43
+      },
+      {
+        "friction": 30.0,
+        "prevention": 0.9,
+        "flag_rate": 0.0078,
+        "precision": 0.1307,
+        "recall": 0.0154,
+        "net_saving": 256.21,
+        "net_saving_per_1k_orders": 12.98
+      }
+    ],
+    "friction_breakeven_by_prevention": {
+      "0.3": 3.5,
+      "0.5": 6.0,
+      "0.7": 8.5,
+      "0.9": 11.0
+    },
+    "friction_headroom": 8.5,
+    "friction_headroom_multiple": 1.7,
+    "profitable_share_of_grid": 0.725
+  },
+  "uncertainty": {
+    "n_resamples": 600,
+    "method": "percentile bootstrap, 95%",
+    "precision": {
+      "point": null,
+      "lo": 0.0709,
+      "hi": 0.0905,
+      "n_draws": 600
+    },
+    "recall": {
+      "point": null,
+      "lo": 0.1974,
+      "hi": 0.246,
+      "n_draws": 600
+    },
+    "pr_auc": {
+      "point": null,
+      "lo": 0.1324,
+      "hi": 0.1584,
+      "n_draws": 600
+    },
+    "net_saving_per_1k": {
+      "point": null,
+      "lo": -51.774,
+      "hi": 256.8202,
+      "n_draws": 600
+    },
+    "flag_rate": {
+      "point": null,
+      "lo": 0.1758,
+      "hi": 0.1871,
+      "n_draws": 600
+    },
+    "matched_flag_rate_precision_diff": {
+      "cross_state": {
+        "point": 0.0518,
+        "lo": 0.0468,
+        "hi": 0.0569,
+        "n_draws": 600,
+        "verdict": "model better"
+      },
+      "long_distance_top25pct": {
+        "point": 0.0895,
+        "lo": 0.0796,
+        "hi": 0.0998,
+        "n_draws": 600,
+        "verdict": "model better"
+      },
+      "tight_promise_bottom25pct": {
+        "point": -0.0134,
+        "lo": -0.0208,
+        "hi": -0.006,
+        "n_draws": 600,
+        "verdict": "rule better"
+      }
+    }
+  },
+  "diagnostics": {
+    "pr_curve": [
+      {
+        "recall": 1.0,
+        "precision": 0.0658
+      },
+      {
+        "recall": 0.9992,
+        "precision": 0.0669
+      },
+      {
+        "recall": 0.9954,
+        "precision": 0.0678
+      },
+      {
+        "recall": 0.9931,
+        "precision": 0.0689
+      },
+      {
+        "recall": 0.9892,
+        "precision": 0.0699
+      },
+      {
+        "recall": 0.9869,
+        "precision": 0.071
+      },
+      {
+        "recall": 0.9823,
+        "precision": 0.072
+      },
+      {
+        "recall": 0.9769,
+        "precision": 0.073
+      },
+      {
+        "recall": 0.9723,
+        "precision": 0.0741
+      },
+      {
+        "recall": 0.9669,
+        "precision": 0.0751
+      },
+      {
+        "recall": 0.9615,
+        "precision": 0.0762
+      },
+      {
+        "recall": 0.9577,
+        "precision": 0.0775
+      },
+      {
+        "recall": 0.9484,
+        "precision": 0.0784
+      },
+      {
+        "recall": 0.943,
+        "precision": 0.0796
+      },
+      {
+        "recall": 0.9369,
+        "precision": 0.0809
+      },
+      {
+        "recall": 0.9284,
+        "precision": 0.082
+      },
+      {
+        "recall": 0.9238,
+        "precision": 0.0835
+      },
+      {
+        "recall": 0.9161,
+        "precision": 0.0847
+      },
+      {
+        "recall": 0.9069,
+        "precision": 0.0859
+      },
+      {
+        "recall": 0.8976,
+        "precision": 0.0872
+      },
+      {
+        "recall": 0.8845,
+        "precision": 0.0881
+      },
+      {
+        "recall": 0.8753,
+        "precision": 0.0895
+      },
+      {
+        "recall": 0.8668,
+        "precision": 0.091
+      },
+      {
+        "recall": 0.856,
+        "precision": 0.0924
+      },
+      {
+        "recall": 0.846,
+        "precision": 0.0939
+      },
+      {
+        "recall": 0.8406,
+        "precision": 0.0961
+      },
+      {
+        "recall": 0.8337,
+        "precision": 0.0982
+      },
+      {
+        "recall": 0.8206,
+        "precision": 0.0996
+      },
+      {
+        "recall": 0.8068,
+        "precision": 0.1011
+      },
+      {
+        "recall": 0.7968,
+        "precision": 0.1032
+      },
+      {
+        "recall": 0.7775,
+        "precision": 0.1042
+      },
+      {
+        "recall": 0.7667,
+        "precision": 0.1064
+      },
+      {
+        "recall": 0.7529,
+        "precision": 0.1083
+      },
+      {
+        "recall": 0.7421,
+        "precision": 0.1109
+      },
+      {
+        "recall": 0.7267,
+        "precision": 0.1129
+      },
+      {
+        "recall": 0.7121,
+        "precision": 0.1153
+      },
+      {
+        "recall": 0.699,
+        "precision": 0.1181
+      },
+      {
+        "recall": 0.6844,
+        "precision": 0.1209
+      },
+      {
+        "recall": 0.6605,
+        "precision": 0.1222
+      },
+      {
+        "recall": 0.6474,
+        "precision": 0.1258
+      },
+      {
+        "recall": 0.6274,
+        "precision": 0.1283
+      },
+      {
+        "recall": 0.6097,
+        "precision": 0.1316
+      },
+      {
+        "recall": 0.5889,
+        "precision": 0.1346
+      },
+      {
+        "recall": 0.5627,
+        "precision": 0.1367
+      },
+      {
+        "recall": 0.535,
+        "precision": 0.1386
+      },
+      {
+        "recall": 0.515,
+        "precision": 0.143
+      },
+      {
+        "recall": 0.495,
+        "precision": 0.148
+      },
+      {
+        "recall": 0.4704,
+        "precision": 0.1523
+      },
+      {
+        "recall": 0.4349,
+        "precision": 0.1537
+      },
+      {
+        "recall": 0.4049,
+        "precision": 0.1573
+      },
+      {
+        "recall": 0.3726,
+        "precision": 0.1609
+      },
+      {
+        "recall": 0.3387,
+        "precision": 0.1645
+      },
+      {
+        "recall": 0.3002,
+        "precision": 0.1667
+      },
+      {
+        "recall": 0.2587,
+        "precision": 0.1676
+      },
+      {
+        "recall": 0.2271,
+        "precision": 0.1765
+      },
+      {
+        "recall": 0.1832,
+        "precision": 0.178
+      },
+      {
+        "recall": 0.1424,
+        "precision": 0.1844
+      },
+      {
+        "recall": 0.1039,
+        "precision": 0.2018
+      },
+      {
+        "recall": 0.0554,
+        "precision": 0.2149
+      },
+      {
+        "recall": 0.0,
+        "precision": 1.0
+      }
+    ],
+    "calibration": [
+      {
+        "bin": 1,
+        "n": 1974,
+        "predicted_risk": 0.0506,
+        "observed_rate": 0.0106,
+        "gap": 0.04
+      },
+      {
+        "bin": 2,
+        "n": 1973,
+        "predicted_risk": 0.0683,
+        "observed_rate": 0.0213,
+        "gap": 0.0471
+      },
+      {
+        "bin": 3,
+        "n": 1973,
+        "predicted_risk": 0.0792,
+        "observed_rate": 0.0274,
+        "gap": 0.0518
+      },
+      {
+        "bin": 4,
+        "n": 1973,
+        "predicted_risk": 0.0886,
+        "observed_rate": 0.0395,
+        "gap": 0.049
+      },
+      {
+        "bin": 5,
+        "n": 1974,
+        "predicted_risk": 0.0977,
+        "observed_rate": 0.0405,
+        "gap": 0.0572
+      },
+      {
+        "bin": 6,
+        "n": 1973,
+        "predicted_risk": 0.1074,
+        "observed_rate": 0.0537,
+        "gap": 0.0536
+      },
+      {
+        "bin": 7,
+        "n": 1973,
+        "predicted_risk": 0.1187,
+        "observed_rate": 0.0664,
+        "gap": 0.0523
+      },
+      {
+        "bin": 8,
+        "n": 1973,
+        "predicted_risk": 0.134,
+        "observed_rate": 0.0933,
+        "gap": 0.0407
+      },
+      {
+        "bin": 9,
+        "n": 1973,
+        "predicted_risk": 0.1557,
+        "observed_rate": 0.1363,
+        "gap": 0.0194
+      },
+      {
+        "bin": 10,
+        "n": 1974,
+        "predicted_risk": 0.1987,
+        "observed_rate": 0.1692,
+        "gap": 0.0295
+      }
+    ],
+    "matched_flag_rate": [
+      {
+        "baseline": "flag_all",
+        "flag_rate": 1.0,
+        "rule_precision": 0.0658,
+        "rule_recall": 1.0,
+        "rule_net_saving": -58940.18,
+        "model_precision": 0.0658,
+        "model_recall": 1.0,
+        "model_net_saving": -58940.18,
+        "precision_lift": 1.0
+      },
+      {
+        "baseline": "cross_state",
+        "flag_rate": 0.594,
+        "rule_precision": 0.0421,
+        "rule_recall": 0.3803,
+        "rule_net_saving": -35502.62,
+        "model_precision": 0.0938,
+        "model_recall": 0.8468,
+        "model_net_saving": -25529.05,
+        "precision_lift": 2.23
+      },
+      {
+        "baseline": "long_distance_top25pct",
+        "flag_rate": 0.25,
+        "rule_precision": 0.0503,
+        "rule_recall": 0.1909,
+        "rule_net_saving": -12207.7,
+        "model_precision": 0.1398,
+        "model_recall": 0.5312,
+        "model_net_saving": -5524.43,
+        "precision_lift": 2.78
+      },
+      {
+        "baseline": "tight_promise_bottom25pct",
+        "flag_rate": 0.2789,
+        "rule_precision": 0.1493,
+        "rule_recall": 0.6328,
+        "rule_net_saving": -9155.86,
+        "model_precision": 0.1359,
+        "model_recall": 0.5758,
+        "model_net_saving": -6493.97,
+        "precision_lift": 0.91
+      }
+    ],
+    "segments": {
+      "by_customer_state": [
+        {
+          "segment": "DF",
+          "n": 473,
+          "failure_rate": 0.0423,
+          "recall": 0.05,
+          "flag_rate": 0.1586
+        },
+        {
+          "segment": "SP",
+          "n": 9145,
+          "failure_rate": 0.0877,
+          "recall": 0.1334,
+          "flag_rate": 0.0979
+        },
+        {
+          "segment": "MG",
+          "n": 2166,
+          "failure_rate": 0.0249,
+          "recall": 0.1852,
+          "flag_rate": 0.0859
+        },
+        {
+          "segment": "RJ",
+          "n": 2275,
+          "failure_rate": 0.0633,
+          "recall": 0.2431,
+          "flag_rate": 0.1899
+        },
+        {
+          "segment": "PR",
+          "n": 995,
+          "failure_rate": 0.0342,
+          "recall": 0.2647,
+          "flag_rate": 0.0985
+        },
+        {
+          "segment": "RS",
+          "n": 956,
+          "failure_rate": 0.0345,
+          "recall": 0.2727,
+          "flag_rate": 0.1768
+        },
+        {
+          "segment": "SC",
+          "n": 629,
+          "failure_rate": 0.0334,
+          "recall": 0.3333,
+          "flag_rate": 0.2671
+        },
+        {
+          "segment": "ES",
+          "n": 367,
+          "failure_rate": 0.0627,
+          "recall": 0.3478,
+          "flag_rate": 0.2234
+        }
+      ],
+      "by_payment_type": [
+        {
+          "segment": "boleto",
+          "n": 3604,
+          "failure_rate": 0.0827,
+          "recall": 0.1678,
+          "flag_rate": 0.1784
+        },
+        {
+          "segment": "voucher",
+          "n": 535,
+          "failure_rate": 0.0523,
+          "recall": 0.1786,
+          "flag_rate": 0.1458
+        },
+        {
+          "segment": "debit_card",
+          "n": 706,
+          "failure_rate": 0.0822,
+          "recall": 0.2241,
+          "flag_rate": 0.1813
+        },
+        {
+          "segment": "credit_card",
+          "n": 14888,
+          "failure_rate": 0.0615,
+          "recall": 0.2415,
+          "flag_rate": 0.1834
+        }
+      ],
+      "by_same_state": [
+        {
+          "segment": "1",
+          "n": 8012,
+          "failure_rate": 0.1005,
+          "recall": 0.1068,
+          "flag_rate": 0.0755
+        },
+        {
+          "segment": "0",
+          "n": 11721,
+          "failure_rate": 0.0421,
+          "recall": 0.4109,
+          "flag_rate": 0.2538
+        }
+      ]
+    },
+    "permutation_importance": [
+      {
+        "feature": "promised_days",
+        "importance": 0.07511,
+        "std": 0.00042
+      },
+      {
+        "feature": "customer_state",
+        "importance": 0.00839,
+        "std": 0.00072
+      },
+      {
+        "feature": "seller_state",
+        "importance": 0.0058,
+        "std": 0.00106
+      },
+      {
+        "feature": "product_volume_cm3",
+        "importance": 0.00351,
+        "std": 0.00132
+      },
+      {
+        "feature": "handling_days",
+        "importance": 0.0017,
+        "std": 0.0013
+      },
+      {
+        "feature": "product_weight_g",
+        "importance": 0.00157,
+        "std": 0.00152
+      },
+      {
+        "feature": "payment_type",
+        "importance": 0.00134,
+        "std": 0.00027
+      },
+      {
+        "feature": "n_sellers",
+        "importance": 0.00098,
+        "std": 0.0008
+      },
+      {
+        "feature": "max_installments",
+        "importance": 0.00091,
+        "std": 0.00045
+      },
+      {
+        "feature": "price_total",
+        "importance": 0.00081,
+        "std": 0.00029
+      },
+      {
+        "feature": "product_photos_qty",
+        "importance": 0.00081,
+        "std": 0.00027
+      },
+      {
+        "feature": "purchase_dayofweek",
+        "importance": 0.00067,
+        "std": 0.00013
+      },
+      {
+        "feature": "distance_km",
+        "importance": 0.00066,
+        "std": 0.00236
+      },
+      {
+        "feature": "purchase_hour",
+        "importance": 0.00059,
+        "std": 0.00073
+      },
+      {
+        "feature": "n_items",
+        "importance": 0.00056,
+        "std": 0.00093
+      },
+      {
+        "feature": "same_state",
+        "importance": 0.00044,
+        "std": 0.00016
+      },
+      {
+        "feature": "n_payment_methods",
+        "importance": 8e-05,
+        "std": 0.00014
+      },
+      {
+        "feature": "n_distinct_products",
+        "importance": 6e-05,
+        "std": 0.00012
+      },
+      {
+        "feature": "is_weekend",
+        "importance": 0.0,
+        "std": 0.0
+      },
+      {
+        "feature": "payment_value",
+        "importance": -0.00064,
+        "std": 0.00083
+      },
+      {
+        "feature": "product_category",
+        "importance": -0.0009,
+        "std": 0.00114
+      },
+      {
+        "feature": "freight_ratio",
+        "importance": -0.00139,
+        "std": 0.00038
+      },
+      {
+        "feature": "price_max",
+        "importance": -0.00164,
+        "std": 0.00083
+      },
+      {
+        "feature": "purchase_month",
+        "importance": -0.00441,
+        "std": 0.00062
+      },
+      {
+        "feature": "freight_total",
+        "importance": -0.00983,
+        "std": 0.00095
+      }
+    ],
+    "pr_auc_check": 0.144
+  },
+  "train_seconds": 88.4
+}

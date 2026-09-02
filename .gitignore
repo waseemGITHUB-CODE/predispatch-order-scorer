@@ -1,0 +1,20 @@
+# Secrets. Never commit.
+.env
+.env.*
+!.env.example
+
+# Kaggle CSVs - 121 MB, downloaded rather than committed.
+# Get them from kaggle.com/datasets/olistbr/brazilian-ecommerce and unzip here.
+data/raw/
+
+# The trained model, the scored test set and the evaluation ARE committed
+# (~11 MB). They rebuild from the raw CSVs with `python -m predispatch.train`,
+# but committing them means the app runs straight after a clone, and a deployed
+# demo needs neither the 121 MB download nor a training step. It also means the
+# numbers a reader sees are the exact ones this repository was measured on.
+
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.claude/
